@@ -1,5 +1,5 @@
 // Import Required Dependencies
-import { readFile, stat as getFileStats } from 'fs/promises';
+import { readFile, stat as getFileOrFolderStats } from 'fs/promises';
 import { resolve as resolveFileOrDirectory, isAbsolute } from 'path';
 import { parse } from 'yaml';
 import chalk from 'chalk';
@@ -38,16 +38,27 @@ async function makeGoogleChatData(givenDirectory: string) {
         workingDirectory = resolveFileOrDirectory(process.cwd(), givenDirectory);
     }
 
-    const folderLocation = resolveFileOrDirectory(workingDirectory, `./Google Chat`);
+    const googleChatFolderLocation = resolveFileOrDirectory(workingDirectory, `./Google Chat`);
+    const googleChatGroupsFolderLocation = resolveFileOrDirectory(googleChatFolderLocation, `./Groups`);
+    // Might add user data to Google Chat Data later.
+    // const googleChatUsersFolderLocation = resolveFileOrDirectory(googleChatFolderLocation, `./Users`);
 
-    console.log(`Finding ${chalk.blue(folderLocation)}...`);
+    console.log(`Finding ${chalk.blue(googleChatFolderLocation)}...`);
 
-    getFileStats(folderLocation)
-    .then(async (fileStats) => {
-        if (fileStats.isDirectory()) {
+    getFileOrFolderStats(googleChatFolderLocation)
+    .then(async (folderStats) => {
+        if (folderStats.isDirectory()) {
             try {
-                console.log(`${chalk.green(`Found ${chalk.blue(folderLocation)}!`)}\nMaking data... This may take awhile, so please be patient!`);
-                console.log(`NOTE: This code is unfinished. Please check the Github repository for updates!`);
+                console.log(`${chalk.green(`Found ${chalk.blue(googleChatFolderLocation)}!`)}\nMaking data... This may take awhile, so please be patient!`);
+                getFileOrFolderStats(googleChatGroupsFolderLocation)
+                .then((groupsFolderStats) => {
+                    if (groupsFolderStats.isDirectory()) {
+                        // TODO: search for each group
+                    }
+                })
+                .catch(() =>{
+                    console.log(chalk.red(`Groups information will be excluded because it could not be found.`));
+                })
             } catch (error) {
                 throw error;
             }
@@ -59,10 +70,10 @@ async function makeGoogleChatData(givenDirectory: string) {
     .catch((error) => {
         switch (true) {
             case (error.message === `Given path was not a folder!`):
-                console.error(`${chalk.red(`${chalk.blue(folderLocation)} was not a folder! Please check it before trying again.`)}`);
+                console.error(`${chalk.red(`${chalk.blue(googleChatFolderLocation)} was not a folder! Please check it before trying again.`)}`);
                 break;
             case (error.code === `ENOENT`):
-                console.error(`${chalk.red(`Could not find ${chalk.blue(folderLocation)}! Please make sure that this folder exists.`)}`);
+                console.error(`${chalk.red(`Could not find ${chalk.blue(googleChatFolderLocation)}! Please make sure that this folder exists.`)}`);
                 break;
             default:
                 console.error(`${error}\n${chalk.red(`An unknown error occured! If this is occuring repeatedly and you don't know why, please notify the developer.`)}`);

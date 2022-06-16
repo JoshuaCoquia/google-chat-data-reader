@@ -1,5 +1,5 @@
 {
-  "name": "hangoutsdatareader",
+  "name": "google-chat-data-reader",
   "packageManager": "yarn@3.2.1",
   "type": "module",
   "scripts": {
