@@ -2,14 +2,14 @@
   "name": "hangoutsdatareader",
   "packageManager": "yarn@3.2.1",
   "type": "module",
+  "scripts": {
+    "dev": "yarn tsc --watch",
+    "build": "yarn tsc --build --verbose && cls && echo \"Project built! Use the following command to get started:\nyarn start\"",
+    "start": "yarn node ./dist/index.js"
+  },
   "devDependencies": {
     "@types/node": "^17.0.44",
     "typescript": "^4.7.3"
-  },
-  "scripts": {
-    "dev": "yarn tsc --watch",
-    "build": "yarn tsc --build --verbose && echo \"Project built! Use the following command to get started:\nyarn start\"",
-    "start": "yarn node ./dist/index.js"
   },
   "dependencies": {
     "chalk": "^5.0.1",
