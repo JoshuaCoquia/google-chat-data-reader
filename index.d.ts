@@ -12,6 +12,7 @@ interface GoogleChatData {
 /** The data of an individual group in Google Chat. */
 interface GoogleChatGroupData {
     type: `DM` | `Space`;
+    name: string;
     messages: GoogleChatMessage;
 }
 
@@ -24,9 +25,21 @@ interface GoogleChatMessage {
     topicId: string;
 }
 
+/** A single user in a group represented as JSON. */
+interface GoogleChatUserInGroup {
+    name: string;
+    email: string;
+    userType: "Human" | "Bot";
+    messages: GoogleChatMessage[];
+}
+
 /** A single user represented as JSON. Appears in group_info.json and messages.json. */
 interface GoogleChatUser {
     name: string;
     email: string;
     userType: "Human" | "Bot";
+}
+
+interface GoogleGroupMessagesFile {
+    messages: GoogleChatMessage[]
 }

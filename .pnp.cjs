@@ -17,14 +17,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
     ],\
     "dependencyTreeRoots": [\
       {\
-        "name": "hangoutsdatareader",\
+        "name": "google-chat-data-reader",\
         "reference": "workspace:."\
       }\
     ],\
     "enableTopLevelFallback": true,\
     "ignorePatternData": "(^(?:\\\\.yarn\\\\/sdks(?:\\\\/(?!\\\\.{1,2}(?:\\\\/|$))(?:(?:(?!(?:^|\\\\/)\\\\.{1,2}(?:\\\\/|$)).)*?)|$))$)",\
     "fallbackExclusionList": [\
-      ["hangoutsdatareader", ["workspace:."]]\
+      ["google-chat-data-reader", ["workspace:."]]\
     ],\
     "fallbackPool": [\
     ],\
@@ -76,11 +76,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["hangoutsdatareader", [\
+      ["google-chat-data-reader", [\
         ["workspace:.", {\
           "packageLocation": "./",\
           "packageDependencies": [\
-            ["hangoutsdatareader", "workspace:."],\
+            ["google-chat-data-reader", "workspace:."],\
             ["@types/node", "npm:17.0.44"],\
             ["chalk", "npm:5.0.1"],\
             ["typescript", "patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=7ad353"],\

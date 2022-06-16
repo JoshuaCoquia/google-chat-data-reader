@@ -33,9 +33,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hangoutsdatareader@workspace:.":
+"google-chat-data-reader@workspace:.":
   version: 0.0.0-use.local
-  resolution: "hangoutsdatareader@workspace:."
+  resolution: "google-chat-data-reader@workspace:."
   dependencies:
     "@types/node": ^17.0.44
     chalk: ^5.0.1
