@@ -1,4 +1,5 @@
 # Google Chat Data Reader
+## v0.1.0
 A simple Command Line Interface (CLI) tool that can be used to read Google Chat data from a **Google Chat** folder.
 
 ## Prerequisites

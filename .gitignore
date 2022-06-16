@@ -136,4 +136,4 @@ dist
 #.pnp.*
 
 # Ignore pre-existing data
-hangouts.json
+input/**/*

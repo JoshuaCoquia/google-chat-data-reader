@@ -4,12 +4,9 @@ import { resolve as resolveFileOrDirectory, isAbsolute } from 'path';
 import { parse } from 'yaml';
 import chalk from 'chalk';
 
-/** The shape of a configuration file for this project. Generally found in /input/config.yml
- */
-interface ConfigFile {
-    folderLocation: string;
-}
+// Types are in index.d.ts, and they are automatically imported.
 
+// Code
 /**
  * Read the config file for this project.
  * @param {string} projectDirectory - The directory of this project.
@@ -29,10 +26,10 @@ async function readConfig(projectDirectory: string): Promise<ConfigFile> {
 }
 
 /**
- * Find hangouts.json file and parse its contents.
+ * Find the Google Chat Folder and turn its contents into an object.
  * @param {string} givenDirectory The directory given to this function.
  */
-async function readHangoutsJSON(givenDirectory: string) {
+async function makeGoogleChatData(givenDirectory: string) {
     let workingDirectory: string;
 
     if (isAbsolute(givenDirectory)) {
@@ -41,37 +38,31 @@ async function readHangoutsJSON(givenDirectory: string) {
         workingDirectory = resolveFileOrDirectory(process.cwd(), givenDirectory);
     }
 
-    const fileLocation = resolveFileOrDirectory(workingDirectory, `./hangouts.json`);
+    const folderLocation = resolveFileOrDirectory(workingDirectory, `./Google Chat`);
 
-    console.log(`Finding ${chalk.blue(fileLocation)}...`);
+    console.log(`Finding ${chalk.blue(folderLocation)}...`);
 
-    getFileStats(fileLocation)
+    getFileStats(folderLocation)
     .then(async (fileStats) => {
-        if (fileStats.isFile()) {
+        if (fileStats.isDirectory()) {
             try {
-                console.log(`${chalk.green(`Found ${chalk.blue(fileLocation)}!`)}\nReading the file's contents. This may take awhile, so please be patient!`);
-                const controller = new AbortController();
-                const { signal } = controller;
-                const file = await readFile(fileLocation, { signal, encoding: 'utf8' });
-                const hangoutsData = JSON.parse(file);
-                console.log(`${chalk.green(`Reading file succeeded!`)}`);
-                return hangoutsData;
-
+                console.log(`${chalk.green(`Found ${chalk.blue(folderLocation)}!`)}\nMaking data... This may take awhile, so please be patient!`);
+                console.log(`NOTE: This code is unfinished. Please check the Github repository for updates!`);
             } catch (error) {
                 throw error;
             }
 
         } else {
-            throw new Error(`Given path was not a file!`);
+            throw new Error(`Given path was not a folder!`);
         }
     })
     .catch((error) => {
         switch (true) {
-            case (error.message === `Given path was not a file!`):
-                console.error(`${chalk.red(`${chalk.blue(fileLocation)} was not a file! Please check it before trying again.`)}`);
+            case (error.message === `Given path was not a folder!`):
+                console.error(`${chalk.red(`${chalk.blue(folderLocation)} was not a folder! Please check it before trying again.`)}`);
                 break;
             case (error.code === `ENOENT`):
-                console.error(`${chalk.red(`Could not find ${chalk.blue(fileLocation)}! Please make sure that the ${chalk.blue(`Hangouts.json`)} is in that location!`)}`);
+                console.error(`${chalk.red(`Could not find ${chalk.blue(folderLocation)}! Please make sure that this folder exists.`)}`);
                 break;
             default:
                 console.error(`${error}\n${chalk.red(`An unknown error occured! If this is occuring repeatedly and you don't know why, please notify the developer.`)}`);
@@ -80,4 +71,4 @@ async function readHangoutsJSON(givenDirectory: string) {
 }
 
 const config = await readConfig(process.cwd());
-const hangoutsData = readHangoutsJSON(config.folderLocation);
+const googleChatData = makeGoogleChatData(config.folderLocation);
