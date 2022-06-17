@@ -6,14 +6,14 @@ interface ConfigFile {
 /** Google Chat Data represented as JSON. */
 interface GoogleChatData {
     /** Each Group in this array is represented as its own object. */
-    groups: GoogleChatGroupData[];
+    groups: GoogleChatGroupInfo[];
 }
 
-/** The data of an individual group in Google Chat. */
-interface GoogleChatGroupData {
+/** The data of a single group in Google Chat. */
+interface GoogleChatGroupInfo {
+    name?: string;
     type: `DM` | `Space`;
-    name: string;
-    messages: GoogleChatMessage;
+    emoji_id: string;
 }
 
 /** A single chat message represented as JSON. */

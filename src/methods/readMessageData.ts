@@ -1,7 +1,7 @@
 import { getDateFromChatString } from "./getDateFromGoogleChatString.js";
 
-export async function getMessageData(rawMessages: GoogleChatMessageRaw[]): Promise<GoogleChatMessage[]> {
-    return new Promise(async (resolvePromise, rejectPromise) => {
+export async function readMessageData(rawMessages: GoogleChatMessageRaw[]): Promise<GoogleChatMessage[]> {
+    return new Promise<GoogleChatMessage[]>(async (resolvePromise, rejectPromise) => {
         try {
             const messagePromises = rawMessages.map(async (rawMessage): Promise<GoogleChatMessage> => {
                 return new Promise(async (resolveMessagePromise, rejectMessagePromise) => {
