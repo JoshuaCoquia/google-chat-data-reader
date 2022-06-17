@@ -52,7 +52,7 @@ async function makeGoogleChatData(givenDirectory: string) {
                 try {
                     console.log(`${chalk.green(`Found ${chalk.blue(googleChatFolderLocation)}!`)}
                     \nMaking data... This may take awhile, so please be patient!`);
-                    const groupsFolderStats = await getFileOrFolderStats(groupsFolderLocation)
+                    await getFileOrFolderStats(groupsFolderLocation)
                         .then(async (groupsFolderStats) => {
                             if (groupsFolderStats.isDirectory()) {
                                 const groupList = await readDirectory(groupsFolderLocation, {});

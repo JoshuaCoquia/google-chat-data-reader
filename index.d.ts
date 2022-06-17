@@ -19,10 +19,15 @@ interface GoogleChatGroupData {
 /** A single chat message represented as JSON. */
 interface GoogleChatMessageRaw {
     creator: GoogleChatUser;
-    /** The created date is represented as a string in the actual data, but the code should convert this into a Date object. */
-    created_date: string;
-    text: string;
-    topicId: string;
+    /** A message has this property in either here or in an index in previous_message_versions
+     * @see previous_message_versions
+     */
+    created_date?: string;
+    updated_date?: string;
+    attached_files?: attachedFile[];
+    text?: string;
+    topicId?: string;
+    previous_message_versions?: GoogleChatMessageRaw;
 }
 
 /** A single chat message represented as JSON. */
@@ -30,19 +35,27 @@ interface GoogleChatMessage {
     creator: GoogleChatUser;
     /** Leftover from GoogleChatMessageRaw
      * @see GoogleChatMessageRaw.created_date
-      */
-    created_date: string;
-    /** The created date is represented as a string in the actual data, but the code should convert this into a Date object. */
-    createdDate: Date | string;
-    text: string;
-    topicId: string;
+     */
+    created_date?: string;
+    /** Leftover from GoogleChatMessageRaw
+     * @see GoogleChatMessageRaw.created_date
+     */
+    updated_date?: string;
+    /** The created date should be converted to a date from a string. */
+    createdDate?: Date | string;
+    /** The updated date should be converted to a date. */
+    updatedDate?: Date | string;
+    text?: string;
+    attached_files?: attachedFile[];
+    previous_message_versions?: GoogleChatMessageRaw;
+    topicId?: string;
 }
 
 /** A single user in a group represented as JSON. */
 interface GoogleChatUserInGroup {
     name: string;
     email: string;
-    userType: "Human" | "Bot";
+    userType: 'Human' | 'Bot';
     messages: GoogleChatMessage[];
 }
 
@@ -50,9 +63,20 @@ interface GoogleChatUserInGroup {
 interface GoogleChatUser {
     name: string;
     email: string;
-    userType: "Human" | "Bot";
+    userType: 'Human' | 'Bot';
 }
 
 interface GoogleGroupMessagesFile {
-    messages: GoogleChatMessage[]
+    messages: GoogleChatMessage[];
+}
+
+interface attachedFile {
+    original_name: string;
+    export_name: string;
+}
+
+interface previous_message_version {
+    created_date?: string;
+    attached_files?: attachedFile[];
+    text?: string;
 }
