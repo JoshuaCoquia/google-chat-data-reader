@@ -44,8 +44,6 @@ async function makeGoogleChatData(givenDirectory: string) {
     // Might add user data to Google Chat Data later.
     // const googleChatUsersFolderLocation = resolveFileOrDirectory(googleChatFolderLocation, `./Users`);
 
-    console.log(`Finding ${chalk.blue(googleChatFolderLocation)}...`);
-
     getFileOrFolderStats(googleChatFolderLocation)
         .then(async (folderStats) => {
             if (folderStats.isDirectory()) {

@@ -38,7 +38,7 @@ export async function getGroupData(
                     console.log(
                         `Amount of messages in ${chalk.yellow(groupInfo.name ?? `Unknown DM`)}: ${chalk.yellow(
                             messages.length
-                        )}`
+                        )} Messages`
                     );
 
                     const listOfMembers: GoogleChatUserInGroup[] = [];
@@ -48,7 +48,7 @@ export async function getGroupData(
                         const customMemberData: GoogleChatUserInGroup = {
                             ...i,
                             messages: messagesByMember,
-                        }
+                        };
                         listOfMembers.push(customMemberData);
                     }
                     listOfMembers.sort((a, b) => {
@@ -59,10 +59,16 @@ export async function getGroupData(
                             return 1;
                         }
                         return 0;
-                    })
+                    });
+                    let UsersThatHaveNotSentMessages = 0;
                     for (const i of listOfMembers) {
-                        console.log(`${i.name} is #${listOfMembers.indexOf(i) + 1} with ${i.messages.length}`);
+                        if (i.messages.length !== 0) {
+                            console.log(`${chalk.yellow(i.name)} sent ${chalk.yellow(i.messages.length)} messages.`);
+                        } else {
+                            UsersThatHaveNotSentMessages += 1;
+                        }
                     }
+                    if (UsersThatHaveNotSentMessages !== 0) console.log(`${chalk.yellow(UsersThatHaveNotSentMessages)} users have not sent any messages.`);
 
                     resolvePromise();
                 }
