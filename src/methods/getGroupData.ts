@@ -3,6 +3,7 @@ import { readFile, readdir as readDirectory, stat as getFileOrFolderStats } from
 import { resolve as resolveFileOrDirectory } from 'path';
 import chalk from 'chalk';
 import { readMessageData } from './readMessageData.js';
+import { arrayBuffer } from 'stream/consumers';
 
 export async function getGroupData(
     groupsFolderLocation: string,
@@ -34,7 +35,34 @@ export async function getGroupData(
                     );
                     const groupInfo: GoogleChatGroupInfo = JSON.parse(groupInfoFile);
 
-                    console.log(`Amount of messages in ${chalk.yellow(groupInfo.name ?? `Unknown DM`)}: ${chalk.yellow(messages.length)}`);
+                    console.log(
+                        `Amount of messages in ${chalk.yellow(groupInfo.name ?? `Unknown DM`)}: ${chalk.yellow(
+                            messages.length
+                        )}`
+                    );
+
+                    const listOfMembers: GoogleChatUserInGroup[] = [];
+
+                    for (const i of groupInfo.members) {
+                        const messagesByMember = messages.filter((message) => message.creator.name === i.name);
+                        const customMemberData: GoogleChatUserInGroup = {
+                            ...i,
+                            messages: messagesByMember,
+                        }
+                        listOfMembers.push(customMemberData);
+                    }
+                    listOfMembers.sort((a, b) => {
+                        if (a.messages.length > b.messages.length) {
+                            return -1;
+                        }
+                        if (a.messages.length < b.messages.length) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                    for (const i of listOfMembers) {
+                        console.log(`${i.name} is #${listOfMembers.indexOf(i) + 1} with ${i.messages.length}`);
+                    }
 
                     resolvePromise();
                 }
