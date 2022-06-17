@@ -2,6 +2,7 @@
 import { readFile, readdir as readDirectory, stat as getFileOrFolderStats } from 'fs/promises';
 import { resolve as resolveFileOrDirectory } from 'path';
 import chalk from 'chalk';
+import { getDateFromChatString } from './getDateFromGoogleChatString.js';
 
 export async function getGroupData(
     groupsFolderLocation: string,
@@ -19,8 +20,17 @@ export async function getGroupData(
                     const groupMessagesFile = await readFile(resolveFileOrDirectory(groupFolderLocation, `messages.json`), {
                         encoding: 'utf-8',
                     });
+                    const groupInfoFile = await readFile(resolveFileOrDirectory(groupFolderLocation, `group_info.json`), {
+                        encoding: 'utf-8',
+                    });
                     
-                    const messages: GoogleChatMessage[] = JSON.parse(groupMessagesFile).messages;
+                    const messagesRaw: GoogleChatMessageRaw[] = JSON.parse(groupMessagesFile).messages;
+                    const messages: GoogleChatMessage[] = messagesRaw.map((messageRaw) => {
+                        const message: any = messageRaw;
+                        message.createdDate = getDateFromChatString(messageRaw.created_date);
+                        return message;
+                    });
+
                     console.log(`amount of messages in ${groupFolderName}: ${messages.length}`);
                     resolve();
                 }

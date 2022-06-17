@@ -17,10 +17,23 @@ interface GoogleChatGroupData {
 }
 
 /** A single chat message represented as JSON. */
-interface GoogleChatMessage {
+interface GoogleChatMessageRaw {
     creator: GoogleChatUser;
     /** The created date is represented as a string in the actual data, but the code should convert this into a Date object. */
-    createdDate: Date;
+    created_date: string;
+    text: string;
+    topicId: string;
+}
+
+/** A single chat message represented as JSON. */
+interface GoogleChatMessage {
+    creator: GoogleChatUser;
+    /** Leftover from GoogleChatMessageRaw
+     * @see GoogleChatMessageRaw.created_date
+      */
+    created_date: string;
+    /** The created date is represented as a string in the actual data, but the code should convert this into a Date object. */
+    createdDate: Date | string;
     text: string;
     topicId: string;
 }
