@@ -1,7 +1,6 @@
 // Import Required Dependencies
 import { readFile, readdir as readDirectory, stat as getFileOrFolderStats } from 'fs/promises';
 import { resolve as resolveFileOrDirectory } from 'path';
-import chalk from 'chalk';
 import { readMessageData } from './readMessageData.js';
 
 export async function getGroupData(
@@ -25,6 +24,7 @@ export async function getGroupData(
                     );
                     const groupInfo: GoogleChatGroupInfo = JSON.parse(groupInfoFile);
                     const listOfMembers: GoogleChatUserInGroup[] = [];
+                    const messages: GoogleChatMessage[] = [];
                     
                     if (groupDirectory.includes(`messages.json`)) {
                         const groupMessagesFile = await readFile(
@@ -33,9 +33,10 @@ export async function getGroupData(
                         );
                         const groupMessagesRaw = JSON.parse(groupMessagesFile);
                         const messagesRaw: GoogleChatMessageRaw[] = groupMessagesRaw.messages;
-                        const messages = await readMessageData(messagesRaw);
+                        const messageData = await readMessageData(messagesRaw);
+                        messages.push(...messageData);
                         for (const i of groupInfo.members) {
-                            const messagesByMember = messages.filter((message) => message.creator.name === i.name);
+                            const messagesByMember = messageData.filter((message) => message.creator.name === i.name);
                             const customMemberData: GoogleChatUserInGroup = {
                                 ...i,
                                 messages: messagesByMember,
@@ -54,10 +55,11 @@ export async function getGroupData(
                     }
 
                     const groupData: GoogleChatGroupInfo = {
-                        name: groupInfo.name ?? `DM with member(s) ${listOfMembers.map((member) => member.name).join(' + ')}`,
+                        name: groupInfo.name ?? `DM with member(s) ${listOfMembers.map((member) => member.name).join(` / `)}`,
                         type: groupInfo.type,
                         emoji_id: groupInfo.emoji_id,
                         members: listOfMembers,
+                        allMessages: messages,
                     }
                     resolvePromise(groupData);
                 }

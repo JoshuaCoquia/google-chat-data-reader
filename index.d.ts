@@ -15,6 +15,7 @@ interface GoogleChatGroupInfo {
     type: `DM` | `Space`;
     emoji_id: string;
     members: GoogleChatUserInGroup[];
+    allMessages: GoogleChatMessage[];
 }
 
 /** A single chat message represented as JSON. */

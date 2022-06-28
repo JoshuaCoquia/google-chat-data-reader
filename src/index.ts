@@ -1,9 +1,10 @@
 // Import Required Dependencies
 import chalk from 'chalk';
 import { readFile } from 'fs/promises';
-import { resolve as resolveFileOrDirectory } from 'path';
+import { resolve as resolveFileOrDirectory, toNamespacedPath } from 'path';
 import { parse } from 'yaml';
 import { makeGoogleChatData } from './methods/makeGoogleChatData.js';
+import inquirer from 'inquirer';
 
 // Types are in index.d.ts, and they are automatically imported.
 
@@ -26,13 +27,27 @@ async function readConfig(projectDirectory: string): Promise<ConfigFile> {
     });
 }
 
-
-
 const config = await readConfig(process.cwd());
-makeGoogleChatData(config.folderLocation)
-.then((googleChatInfo) => {
-    //TODO: use data
-})
-.catch(error => {
-    console.error(`${error}\n${chalk.red(`Google Chat data could not be made because of an error!`)}`);
-})
+makeGoogleChatData(config.folderLocation).then(async (groups) => {
+    while (true) {
+        const { continuereading } = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'continuereading',
+                message: 'Would you like to continue reading the data?',
+                choices: ['Yes', 'No'],
+            },
+        ]);
+        if (continuereading === 'No') break;
+        if (continuereading === 'Yes') {
+            const { grouptoread } = await inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'grouptoread',
+                    message: 'Which group do you want to read?',
+                    choices: groups.map((group) => group.name),
+                },
+            ]);
+        }
+    }
+});
