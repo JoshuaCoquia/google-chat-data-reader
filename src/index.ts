@@ -34,20 +34,62 @@ makeGoogleChatData(config.folderLocation).then(async (groups) => {
             {
                 type: 'list',
                 name: 'continuereading',
-                message: 'Would you like to continue reading the data?',
+                message: "Would you like to read a group's data?",
                 choices: ['Yes', 'No'],
             },
         ]);
         if (continuereading === 'No') break;
         if (continuereading === 'Yes') {
-            const { grouptoread } = await inquirer.prompt([
+            const {
+                grouptoread,
+                action,
+            }: {
+                [key: string]: string;
+            } = await inquirer.prompt([
                 {
                     type: 'list',
                     name: 'grouptoread',
                     message: 'Which group do you want to read?',
-                    choices: groups.map((group) => group.name),
+                    choices: [...groups.map((group) => group.name), new inquirer.Separator()],
+                },
+                {
+                    type: 'list',
+                    name: 'action',
+                    message: `What do you want to do with the group?`,
+                    choices: [
+                        'Count Total Number of Messages in Group',
+                        'Count Number of Messages by Each Member',
+                        'Search for Message',
+                        'Get Group Information',
+                        new inquirer.Separator(),
+                        chalk.red(`Go Back`),
+                        new inquirer.Separator(),
+                    ],
                 },
             ]);
+            const group = groups.find((group) => group.name === grouptoread);
+            if (group) {
+                const { action } = await inquirer.prompt([]);
+                switch (action) {
+                    default:
+                        inquirer.prompt([
+                            {
+                                type: 'confirm',
+                                name: 'a',
+                                message: `The action ${chalk.blue(action)} could not be performed...`,
+                            },
+                        ]);
+                        break;
+                }
+            } else {
+                await inquirer.prompt([
+                    {
+                        type: 'confirm',
+                        name: 'b',
+                        message: `The group ${grouptoread} could not be found...`,
+                    },
+                ]);
+            }
         }
     }
 });
