@@ -29,6 +29,7 @@ You need to have the following installed:
 4. **Build & Run**  
 Go into your preferred CLI, and run the following commands in this folder:
   ```console
+  yarn install
   yarn build
   yarn start
   ```

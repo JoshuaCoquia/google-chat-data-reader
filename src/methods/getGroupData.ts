@@ -50,7 +50,8 @@ export async function getGroupData(
                             if (a.messages.length < b.messages.length) {
                                 return 1;
                             }
-                            return 0;
+                            // localeCompare taken from https://stackoverflow.com/a/45544166
+                            return a.name.localeCompare(b.name);
                         });
                     }
 

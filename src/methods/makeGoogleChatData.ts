@@ -35,7 +35,6 @@ export async function makeGoogleChatData(givenDirectory: string): Promise<Google
                                         const groupPromises = groupList.map((i) => getGroupData(groupsFolderLocation, i));
                                         for await (const i of groupPromises) {
                                             groups.push(i);
-                                            console.log(`Finished making data on ${chalk.blue(i.name)}!`);
                                         }
                                         console.log(`${chalk.green(`Finished making data on the following groups:\n${chalk.blue(groups.map(group => group.name).join(`\n`))}`)}`);
                                         resolvePromise(groups);
