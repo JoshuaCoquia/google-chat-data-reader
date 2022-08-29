@@ -29,126 +29,133 @@ import inquirer from 'inquirer';
 
     const config = await readConfig(process.cwd());
     makeGoogleChatData(config.folderLocation).then(async (groups) => {
-        doAPrompt();
+        let doPrompts = true;
+        while (doPrompts) {
+            await doAPrompt();
+        }
         async function doAPrompt() {
-            const { continuereading } = await inquirer.prompt([
-                {
-                    type: 'list',
-                    name: 'continuereading',
-                    message: "Would you like to read a group's data?",
-                    choices: ['Yes', 'No'],
-                },
-            ]);
-            if (continuereading === 'Yes') {
-                inquirer
-                    .prompt([
-                        {
-                            type: 'list',
-                            name: 'grouptoread',
-                            message: 'Which group do you want to read?',
-                            choices: [...groups.map((group) => group.name), new inquirer.Separator()],
-                        },
-                        {
-                            type: 'list',
-                            name: 'action',
-                            message: `What do you want to do with the group?`,
-                            choices: [
-                                'Count Total Number of Messages in Group',
-                                'Count Number of Messages by Each Member',
-                                'Search for Message(s)',
-                                'Get Group Information',
-                                new inquirer.Separator(),
-                                chalk.red(`Go Back`),
-                                new inquirer.Separator(),
-                            ],
-                        },
-                        {
-                            type: 'number',
-                            name: 'startdate',
-                            when: (answers) =>
-                                answers.action.startsWith('Count') || answers.action.startsWith('Search'),
-                            message: 'Start Date? (unix timestamp OR invalid date for all time)',
-                        },
-                        {
-                            type: 'date',
-                            name: 'enddate',
-                            when: (answers) =>
-                                answers.action.startsWith('Count') || answers.action.startsWith('Search'),
-                            message: 'End Date? (unix timestamp OR invalid date for all time)',
-                        },
-                    ])
-                    .then(async (answers) => {
-                        const { grouptoread, action, startdate, enddate } = answers;
-                        const startingDate = new Date(startdate);
-                        const endingDate = new Date(enddate);
-                        console.log(`Starting Date: ${startdate}\nEnding Date: ${endingDate}`);
-                        const group = groups.find((group) => group.name === grouptoread);
-                        if (group) {
-                            switch (action) {
-                                case 'Count Total Number of Messages in Group':
-                                    console.log(
-                                        `Total amount of messages in ${group.name}: ${group.allMessages.length}`
-                                    );
-                                    break;
-                                case 'Count Number of Messages by Each Member':
-                                    const memberInfo: any = {};
-                                    // https://stackoverflow.com/a/1353711 for date checker
-                                    let useStartingDate = false;
-                                    let useEndingDate = false;
-                                    if (startingDate instanceof Date && !isNaN(startingDate.valueOf()))
-                                        useStartingDate = true;
-                                    if (endingDate instanceof Date && !isNaN(endingDate.valueOf()))
-                                        useEndingDate = true;
-                                    for (const i of group.members) {
-                                        const { name, email, messages } = i;
-                                        const filteredMessages = messages.filter((message) => {
-                                            const messageTimestamp = message.updatedDate
-                                                ? (message.updatedDate as Date)
-                                                : (message.createdDate as Date);
-                                            let passesStartingDate = false;
-                                            let passesEndingDate = true;
-                                            if (useStartingDate && startingDate.valueOf() > messageTimestamp.valueOf()) passesStartingDate = false;
-                                            if (useEndingDate && endingDate.valueOf() > messageTimestamp.valueOf()) passesStartingDate = false;
-                                            return passesStartingDate && passesEndingDate;
-                                        });
-                                        memberInfo[email] = {
-                                            name,
-                                            messages: filteredMessages.length,
-                                        };
-                                    }
-                                    console.table(memberInfo);
+            return new Promise<void>(async (resolve, reject) => {
+                const { continuereading } = await inquirer.prompt([
+                    {
+                        type: 'list',
+                        name: 'continuereading',
+                        message: "Would you like to read a group's data?",
+                        choices: ['Yes', 'No'],
+                    },
+                ]);
+                if (continuereading === 'Yes') {
+                    inquirer
+                        .prompt([
+                            {
+                                type: 'list',
+                                name: 'grouptoread',
+                                message: 'Which group do you want to read?',
+                                choices: [...groups.map((group) => group.name), new inquirer.Separator()],
+                            },
+                            {
+                                type: 'list',
+                                name: 'action',
+                                message: `What do you want to do with the group?`,
+                                choices: [
+                                    'Count Total Number of Messages in Group',
+                                    'Count Number of Messages by Each Member',
+                                    'Search for Message(s)',
+                                    'Get Group Information',
+                                    new inquirer.Separator(),
+                                    chalk.red(`Go Back`),
+                                    new inquirer.Separator(),
+                                ],
+                            },
+                            // {
+                            //     type: 'number',
+                            //     name: 'startdate',
+                            //     when: (answers) =>
+                            //         answers.action.startsWith('Count') || answers.action.startsWith('Search'),
+                            //     message: 'Start Date? (unix timestamp OR invalid date for all time)',
+                            // },
+                            // {
+                            //     type: 'number',
+                            //     name: 'enddate',
+                            //     when: (answers) =>
+                            //         answers.action.startsWith('Count') || answers.action.startsWith('Search'),
+                            //     message: 'End Date? (unix timestamp OR invalid date for all time)',
+                            // },
+                        ])
+                        .then(async (answers) => {
+                            const { grouptoread, action, startdate, enddate } = answers;
+                            // const startingDate = new Date(startdate);
+                            // const endingDate = new Date(enddate);
 
-                                    break;
-                                // case 'Search for Message(s)':
+                            const group = groups.find((group) => group.name === grouptoread);
+                            if (group) {
+                                switch (action) {
+                                    case 'Count Total Number of Messages in Group':
+                                        console.log(
+                                            `Total amount of messages in ${group.name}: ${group.allMessages.length}`
+                                        );
+                                        break;
+                                    case 'Count Number of Messages by Each Member':
+                                        const memberInfo: any = {};
+                                        // https://stackoverflow.com/a/1353711 for date checker
+                                        // let useStartingDate = false;
+                                        // let useEndingDate = false;
+                                        // let startTimestamp: number;
+                                        // let endTimestamp: number;
+                                        // if (startingDate instanceof Date && !isNaN(startingDate.getTime())) {
+                                        //     useStartingDate = true;
+                                        //     startTimestamp = startingDate.getTime();
+                                        // }
+                                        // if (endingDate instanceof Date && !isNaN(endingDate.getTime())) {
+                                        //     useEndingDate = true;
+                                        //     endTimestamp = endingDate.getTime();
+                                        // }
+                                        
+                                        for (const i of group.members) {
+                                            const { name, email, messages } = i;
+                                            memberInfo[email] = {
+                                                name,
+                                                messages: messages.length,
+                                            };
+                                        }
+                                        console.table(memberInfo);
 
-                                //     break;
-                                // case 'Get Group Information':
+                                        break;
+                                    // case 'Search for Message(s)':
 
-                                //     break;
-                                case chalk.red(`Go Back`):
-                                    break;
-                                default:
-                                    inquirer.prompt([
-                                        {
-                                            type: 'confirm',
-                                            name: 'a',
-                                            message: `The action ${chalk.blue(action)} could not be performed...`,
-                                        },
-                                    ]);
-                                    break;
+                                    //     break;
+                                    // case 'Get Group Information':
+
+                                    //     break;
+                                    case chalk.red(`Go Back`):
+                                        break;
+                                    default:
+                                        inquirer.prompt([
+                                            {
+                                                type: 'confirm',
+                                                name: 'a',
+                                                message: `The action ${chalk.blue(action)} could not be performed...`,
+                                            },
+                                        ]);
+                                        break;
+                                }
+                                resolve();
+                            } else {
+                                await inquirer.prompt([
+                                    {
+                                        type: 'confirm',
+                                        name: 'b',
+                                        message: `The group ${grouptoread} could not be found...`,
+                                    },
+                                ]);
+                                resolve();
                             }
-                        } else {
-                            await inquirer.prompt([
-                                {
-                                    type: 'confirm',
-                                    name: 'b',
-                                    message: `The group ${grouptoread} could not be found...`,
-                                },
-                            ]);
-                            doAPrompt();
-                        }
-                    });
-            }
+                        });
+                } else {
+                    doPrompts = false;
+                    resolve();
+                }
+            })
+
         }
     });
 })();

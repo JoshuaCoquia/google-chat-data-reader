@@ -44,9 +44,9 @@ interface GoogleChatMessage {
      */
     updated_date?: string;
     /** The created date should be converted to a date from a string. */
-    createdDate?: Date | string;
+    createdDate?: Date;
     /** The updated date should be converted to a date. */
-    updatedDate?: Date | string;
+    updatedDate?: Date;
     text?: string;
     attached_files?: attachedFile[];
     previous_message_versions?: GoogleChatMessageRaw;
