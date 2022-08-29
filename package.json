@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "yarn tsc --watch",
-    "build": "yarn tsc --build --verbose && cls && echo \"Project built! Use the following command to get started:\nyarn start\"",
+    "build": "yarn tsc --build --verbose && echo \"Project built! Use the following command to get started:\nyarn start\"",
     "start": "node ./dist/index.js"
   },
   "devDependencies": {
