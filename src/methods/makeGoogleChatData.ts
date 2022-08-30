@@ -28,20 +28,21 @@ export async function makeGoogleChatData(givenDirectory: string): Promise<Google
                             console.log(`${chalk.green(`Found ${chalk.blue(googleChatFolderLocation)}!`)}
                             \nMaking data... This may take awhile, so please be patient!`);
                             await getFileOrFolderStats(groupsFolderLocation)
-                                .then(async (groupsFolderStats) => {
-                                    if (groupsFolderStats.isDirectory()) {
-                                        const groupList = await readDirectory(groupsFolderLocation, {});
-                                        const groups: GoogleChatGroupInfo[] = [];
-                                        const groupPromises = groupList.map((i) => getGroupData(groupsFolderLocation, i));
-                                        for await (const i of groupPromises) {
-                                            groups.push(i);
-                                        }
-                                        console.log(`${chalk.green(`Finished making data on the following groups:\n${chalk.blue(groups.map(group => group.name).join(`\n`))}`)}`);
-                                        resolvePromise(groups);
+                            .then(async (groupsFolderStats) => {
+                                if (groupsFolderStats.isDirectory()) {
+                                    const groupList = await readDirectory(groupsFolderLocation, {});
+                                    const groups: GoogleChatGroupInfo[] = [];
+                                    const groupPromises = groupList.map((i) => getGroupData(groupsFolderLocation, i));
+                                    for await (const i of groupPromises) {
+                                        groups.push(i);
+                                    }
+                                    console.log(`${chalk.green(`Finished making data on the following groups:\n${chalk.blue(groups.map(group => group.name).join(`\n`))}`)}`);
+                                    resolvePromise(groups);
                                     }
                                 })
                                 .catch((error) => {
-                                    console.log(error);
+                                    console.error(error);
+                                    console.trace(error);
                                     console.log(
                                         chalk.red(`Groups information will be excluded because it could not be found.`)
                                     );
