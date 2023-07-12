@@ -59,9 +59,9 @@ export async function getGroupData(
                     let groupName: string;
                     let groupType: `DM` | `Space`;
                     if (groupInfo.name) {
-                        groupName = `Space: ${groupInfo.name}`
+                        groupName = `Space - ${groupInfo.name}`
                     } else {
-                        groupName = `DM: ${listOfMembers.map((member) => member.name).join(` / `)}`;
+                        groupName = `DM - ${listOfMembers.map((member) => member.name).join(` / `)}`;
                     };
                     if (groupFolderLocation.includes('Space')) groupType = 'Space'
                     if (groupFolderLocation.includes('DM')) groupType = 'DM'
