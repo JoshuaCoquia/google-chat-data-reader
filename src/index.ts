@@ -31,9 +31,6 @@ import inquirer from 'inquirer';
     try {
         makeGoogleChatData(config.folderLocation).then(async (groups) => {
             let doPrompts = true;
-            while (doPrompts) {
-                await doAPrompt();
-            }
             async function doAPrompt() {
                 return new Promise<void>(async (resolve, reject) => {
                     const { continuereading } = await inquirer.prompt([
@@ -64,6 +61,7 @@ import inquirer from 'inquirer';
                                         'Get Group Information',
                                         new inquirer.Separator(),
                                         chalk.red(`Go Back`),
+
                                         new inquirer.Separator(),
                                     ],
                                 },
@@ -110,23 +108,25 @@ import inquirer from 'inquirer';
                                             //     useEndingDate = true;
                                             //     endTimestamp = endingDate.getTime();
                                             // }
-
-                                            for (const i of group.members) {
-                                                const { name, email, messages } = i;
-                                                memberInfo[email] = {
-                                                    name,
-                                                    messages: messages.length,
-                                                };
+                                            if (group.members.length != 0) {
+                                                for (const i of group.members) {
+                                                    const { name, email, messages } = i;
+                                                    memberInfo[email] = {
+                                                        name,
+                                                        messages: messages.length,
+                                                    };
+                                                }
+                                                console.table(memberInfo);
+                                            } else {
+                                                console.log(`There appears to be no members in this group...`);
                                             }
-                                            console.table(memberInfo);
-
                                             break;
                                         // case 'Search for Message(s)':
 
                                         //     break;
-                                        // case 'Get Group Information':
-
-                                        //     break;
+                                        case 'Get Group Information':
+                                            console.log(`Group Name: ${group.name}\nGroup ID: ${group.id}\nGroup Type: ${group.type}`)
+                                            break;
                                         case chalk.red(`Go Back`):
                                             break;
                                         default:
@@ -158,6 +158,9 @@ import inquirer from 'inquirer';
                 })
 
             }
+            do {
+                await doAPrompt();
+            } while (doPrompts)
         });
     } catch (error) {
         console.error(error);

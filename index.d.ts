@@ -12,6 +12,7 @@ interface GoogleChatData {
 /** The data of a single group in Google Chat. */
 interface GoogleChatGroupInfo {
     name?: string;
+    id: string;
     type: `DM` | `Space`;
     emoji_id: string;
     members: GoogleChatUserInGroup[];

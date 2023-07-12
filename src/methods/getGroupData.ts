@@ -35,28 +35,40 @@ export async function getGroupData(
                         const messagesRaw: GoogleChatMessageRaw[] = groupMessagesRaw.messages;
                         const messageData = await readMessageData(messagesRaw);
                         messages.push(...messageData);
-                        for (const i of groupInfo.members) {
-                            const messagesByMember = messageData.filter((message) => message.creator.name === i.name);
-                            const customMemberData: GoogleChatUserInGroup = {
-                                ...i,
-                                messages: messagesByMember,
-                            };
-                            listOfMembers.push(customMemberData);
+                        if (groupInfo.members) {
+                            for (const i of groupInfo.members) {
+                                const messagesByMember = messageData.filter((message) => message.creator.name === i.name);
+                                const customMemberData: GoogleChatUserInGroup = {
+                                    ...i,
+                                    messages: messagesByMember,
+                                };
+                                listOfMembers.push(customMemberData);
+                            }
+                            listOfMembers.sort((a, b) => {
+                                if (a.messages.length > b.messages.length) {
+                                    return -1;
+                                }
+                                if (a.messages.length < b.messages.length) {
+                                    return 1;
+                                }
+                                // localeCompare taken from https://stackoverflow.com/a/45544166
+                                return a.name.localeCompare(b.name);
+                            });
                         }
-                        listOfMembers.sort((a, b) => {
-                            if (a.messages.length > b.messages.length) {
-                                return -1;
-                            }
-                            if (a.messages.length < b.messages.length) {
-                                return 1;
-                            }
-                            // localeCompare taken from https://stackoverflow.com/a/45544166
-                            return a.name.localeCompare(b.name);
-                        });
                     }
+                    let groupName: string;
+                    let groupType: `DM` | `Space`;
+                    if (groupInfo.name) {
+                        groupName = `Space: ${groupInfo.name}`
+                    } else {
+                        groupName = `DM: ${listOfMembers.map((member) => member.name).join(` / `)}`;
+                    };
+                    if (groupFolderLocation.includes('Space')) groupType = 'Space'
+                    if (groupFolderLocation.includes('DM')) groupType = 'DM'
 
                     const groupData: GoogleChatGroupInfo = {
-                        name: groupInfo.name ?? `DM with member(s) ${listOfMembers.map((member) => member.name).join(` / `)}`,
+                        name: groupName,
+                        id: groupInfo.id,
                         type: groupInfo.type,
                         emoji_id: groupInfo.emoji_id,
                         members: listOfMembers,
